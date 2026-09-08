@@ -24,13 +24,15 @@
 
 ## Demo
 
-以下模板和演示可在本地浏览器中预览。下载仓库后在目录运行 `python3 -m http.server 8000`，打开对应 HTML 页面；活动日期、嘉宾和数据属于演示内容。
+🔗 [演示总览](https://brclio-design-demos.brclio.com/)
+
+以下模板和演示可直接在线预览。也可下载仓库，在目录运行 `python3 -m http.server 8000` 后打开对应 HTML 页面；活动日期、嘉宾和数据属于演示内容。
 
 ### 📖 教程型 - 教程模板
 
 信息清晰、步骤明确、有节奏的单页科普/教程。
 
-🔗 [页面文件](assets/template-tutorial.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/assets/template-tutorial.html)
 
 ---
 
@@ -38,7 +40,7 @@
 
 把审美写成操作手册——从纠正AI到做出自己的Design Skill的完整过程。
 
-🔗 [页面文件](demo-readme-tutorial.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/demo-readme-tutorial.html)
 
 ---
 
@@ -46,7 +48,7 @@
 
 视觉冲击、深浅面板交替、强节奏感的活动邀请页。
 
-🔗 [页面文件](demo-landing.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/demo-landing.html)
 
 ---
 
@@ -54,7 +56,7 @@
 
 功能优先、交互感、信息密度高的应用型页面。
 
-🔗 [页面文件](demo-app.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/demo-app.html)
 
 ---
 
@@ -62,7 +64,7 @@
 
 3:4 比例、字大、手机可读、一键导出 PNG 的图文卡片。
 
-🔗 [页面文件](demo-cards.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/demo-cards.html)
 
 ---
 
@@ -70,7 +72,7 @@
 
 杂志编号风：全内联样式 + section 标签，复制粘贴进微信公众号编辑器即可。
 
-🔗 [页面文件](assets/demo-wechat.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/assets/demo-wechat.html)
 
 ---
 
@@ -78,7 +80,7 @@
 
 16种经过验证的布局模式一览。
 
-🔗 [页面文件](demo-layouts.html)
+🔗 [在线预览](https://brclio-design-demos.brclio.com/demo-layouts.html)
 
 ---
 
@@ -86,7 +88,7 @@
 
 51个经过验证的可复用组件。
 
-🔗 [组件库页面](components-preview.html)
+🔗 [组件库预览](https://brclio-design-demos.brclio.com/components-preview.html)
 
 ---
 
