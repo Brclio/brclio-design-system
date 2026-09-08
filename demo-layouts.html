@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Playground · 16种布局模式预览</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Noto+Serif+SC:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --_brclio-ds: "brclio-v1";
+      --blue: #2B7FD8;
+      --yellow: #F4D758;
+      --red: #E84A5F;
+      --cream: #fefcf6;
+      --ink: #1A1A2E;
+      --ink-light: #4a4a5a;
+      --ink-faint: #8a8a9a;
+      --preview-bg: #FFF8E1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* === Top Nav === */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--cream);
+      border-bottom: 1px solid rgba(26,26,46,0.08);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .top-nav::before {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 4px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+    .top-nav::after {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 4px;
+      background: var(--yellow);
+      border-radius: 2px;
+      margin-left: -8px;
+    }
+    .top-nav h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-left: 4px;
+    }
+    .top-nav h1 span {
+      color: var(--ink-faint);
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      margin-left: 8px;
+    }
+
+    /* === Page Container === */
+    .page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 3rem 2rem 6rem;
+    }
+
+    /* === Layout Block === */
+    .layout-block {
+      margin-bottom: 4rem;
+    }
+    .layout-block:last-child {
+      margin-bottom: 0;
+    }
+    .layout-header {
+      margin-bottom: 1rem;
+    }
+    .layout-header h2 {
+      font-family: 'Noto Serif SC', 'Fraunces', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: inline;
+      background: linear-gradient(transparent 60%, #F4D758 60%);
+      padding: 0 4px;
+    }
+    .layout-header h2 .num {
+      font-family: 'Fraunces', serif;
+      color: var(--blue);
+      margin-right: 6px;
+    }
+
+    /* === Preview Box === */
+    .preview-box {
+      background: var(--preview-bg);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      overflow: hidden;
+      border: 1px solid rgba(244,215,88,0.3);
+    }
+
+    /* === Scene Tag === */
+    .scene-tag {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--ink-faint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .scene-tag::before {
+      content: '适用';
+      font-size: 0.7rem;
+      background: var(--blue);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    /* ==============================
+       MINI PREVIEW STYLES
+       ============================== */
+
+    /* Shared placeholder styles */
+    .ph-text {
+      height: 10px;
+      background: rgba(26,26,46,0.12);
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .ph-text.short { width: 60%; }
+    .ph-text.medium { width: 80%; }
+    .ph-text.xshort { width: 40%; }
+    .ph-heading {
+      height: 16px;
+      background: var(--ink);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      width: 50%;
+    }
+    .ph-img {
+      background: rgba(43,127,216,0.1);
+      border-radius: 8px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      font-size: 0.7rem;
+      font-weight: 600;
+      opacity: 0.6;
+    }
+    .ph-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    /* 1. Hero双栏不对称 */
+    .mini-hero-asym {
+      display: grid;
+      grid-template-columns: 1fr 0.6fr;
+      gap: 24px;
+      align-items: center;
+      min-height: 160px;
+    }
+    .mini-hero-asym .visual {
+      height: 120px;
+    }
+
+    /* 2. Sticky侧栏 */
+    .mini-sticky {
+      display: grid;
+      grid-template-columns: 0.35fr 1fr;
+      gap: 24px;
+    }
+    .mini-sticky .side {
+      border-right: 2px solid rgba(43,127,216,0.15);
+      padding-right: 16px;
+    }
+    .mini-sticky .side .num {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: rgba(43,127,216,0.2);
+    }
+
+    /* 3. 三等分卡片 */
+    .mini-grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .mini-grid3 .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .mini-grid3 .card-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: rgba(43,127,216,0.12);
+      margin-bottom: 8px;
+    }
+
+    /* 4. 纵向Step */
+    .mini-vstep {
+      padding-left: 40px;
+      position: relative;
+    }
+    .mini-vstep::before {
+      content: '';
+      position: absolute;
+      left: 16px;
+      top: 20px; bottom: 20px;
+      width: 2px;
+      border-left: none; background: var(--yellow); width: 2px;
+    }
+    .mini-vstep .step {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .mini-vstep .step:last-child { margin-bottom: 0; }
+    .mini-vstep .dot {
+      position: absolute;
+      left: -40px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* 5. 中轴时间线 */
+    .mini-timeline-center {
+      position: relative;
+      padding: 10px 0;
+    }
+    .mini-timeline-center .axis {
+      position: absolute;
+      left: 50%;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: rgba(43,127,216,0.15);
+    }
+    .mini-timeline-center .item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    .mini-timeline-center .item:last-child { margin-bottom: 0; }
+    .mini-timeline-center .item .block {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .mini-timeline-center .item.reverse { direction: rtl; }
+    .mini-timeline-center .item.reverse .block { direction: ltr; }
+
+    /* 6. 全宽深色面板 */
+    .mini-dark {
+      background: #151821;
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .mini-dark blockquote {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .mini-dark blockquote::before { content: '"'; color: var(--yellow); }
+    .mini-dark blockquote::after { content: '"'; color: var(--yellow); }
+
+    /* 7. 横向Step */
+    .mini-hstep {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      position: relative;
+      text-align: center;
+    }
+    .mini-hstep::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 20px; right: 20px;
+      height: 3px;
+      background: var(--yellow);
+      border-radius: 2px;
+    }
+    .mini-hstep .step-dot {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+    }
+    .mini-hstep h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* 8. Hero全屏居中 */
+    .mini-hero-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+    }
+    .mini-hero-center .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 24px rgba(26,26,46,0.08);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* 9. Hero单栏纵向 */
+    .mini-hero-vert {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+    .mini-hero-vert .avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(43,127,216,0.12);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .mini-hero-vert .tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .mini-hero-vert .tag {
+      font-size: 0.65rem;
+      background: rgba(43,127,216,0.08);
+      color: var(--blue);
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    /* 10. Auto-fill网格 */
+    .mini-autogrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .mini-autogrid .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .mini-autogrid .card-emoji {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    /* 11. 品牌色面板 */
+    .mini-accent {
+      background: var(--blue);
+      color: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .mini-accent h3 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .mini-accent p {
+      font-size: 0.8rem;
+      opacity: 0.85;
+    }
+
+    /* 12. 横向滚动时间线 */
+    .mini-hscroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scroll-snap-type: x mandatory;
+    }
+    .mini-hscroll::-webkit-scrollbar {
+      height: 4px;
+    }
+    .mini-hscroll::-webkit-scrollbar-thumb {
+      background: var(--yellow);
+      border-radius: 2px;
+    }
+    .mini-hscroll .card {
+      flex: 0 0 180px;
+      scroll-snap-align: start;
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .mini-hscroll .card .year {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+      color: var(--blue);
+      opacity: 0.6;
+    }
+
+    /* 13. 分栏对称 */
+    .mini-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 140px;
+    }
+    .mini-split .left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: #fff;
+    }
+    .mini-split .left h3 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1rem;
+      color: var(--red);
+    }
+    .mini-split .right {
+      background: rgba(244,215,88,0.15);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+    .mini-split .right ul {
+      list-style: none;
+      font-size: 0.75rem;
+      color: var(--ink-light);
+    }
+    .mini-split .right ul li {
+      padding: 4px 0;
+      padding-left: 12px;
+      position: relative;
+    }
+    .mini-split .right ul li::before {
+      content: '×';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* 14. Tab切换 */
+    .mini-tab {
+      max-width: 100%;
+    }
+    .mini-tab .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 12px;
+    }
+    .mini-tab .tab-btn {
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      color: var(--ink-faint);
+    }
+    .mini-tab .tab-btn.active {
+      border-bottom-color: var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .mini-tab .tab-panel {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* 15. 无限画布 */
+    .mini-canvas {
+      position: relative;
+      height: 200px;
+      background-image: radial-gradient(circle, rgba(43,127,216,0.13) 1.2px, transparent 1.2px);
+      background-size: 20px 20px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .mini-canvas .float-card {
+      position: absolute;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+      font-size: 0.7rem;
+    }
+    .mini-canvas .fc1 { top: 20px; left: 30px; }
+    .mini-canvas .fc2 { top: 80px; left: 200px; border-top: 3px solid var(--blue); }
+    .mini-canvas .fc3 { top: 40px; right: 40px; border-top: 3px solid var(--yellow); }
+    .mini-canvas .fc4 { bottom: 30px; left: 100px; border-top: 3px solid var(--red); }
+
+    /* 16. Sticky杂志 */
+    .mini-sticky-mag {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 20px;
+    }
+    .mini-sticky-mag .sidebar ul {
+      list-style: none;
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+    }
+    .mini-sticky-mag .sidebar ul li {
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mini-sticky-mag .sidebar ul li .snum {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: rgba(43,127,216,0.15);
+      min-width: 24px;
+    }
+    .mini-sticky-mag .sidebar ul li.active {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .mini-sticky-mag .sidebar ul li.active .snum {
+      color: var(--blue);
+    }
+    .mini-sticky-mag .steps-col .step-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .mini-sticky-mag .steps-col .step-card:last-child { margin-bottom: 0; }
+    .mini-sticky-mag .steps-col .step-card .img-area {
+      height: 50px;
+      background: rgba(43,127,216,0.06);
+    }
+    .mini-sticky-mag .steps-col .step-card .card-body {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mini-sticky-mag .steps-col .step-card .card-body .snum {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: rgba(43,127,216,0.15);
+    }
+    .mini-sticky-mag .steps-col .step-card:nth-child(2) .card-body .snum {
+      color: rgba(244,215,88,0.4);
+    }
+    .mini-sticky-mag .steps-col .step-card:nth-child(3) .card-body .snum {
+      color: rgba(232,74,95,0.2);
+    }
+
+    /* === Responsive === */
+    @media (max-width: 768px) {
+      .mini-hero-asym { grid-template-columns: 1fr; }
+      .mini-sticky { grid-template-columns: 1fr; }
+      .mini-grid3 { grid-template-columns: 1fr; }
+      .mini-hstep { grid-template-columns: 1fr; gap: 16px; }
+      .mini-hstep::before { display: none; }
+      .mini-split { grid-template-columns: 1fr; }
+      .mini-timeline-center .item { grid-template-columns: 1fr; }
+      .mini-sticky-mag { grid-template-columns: 1fr; }
+      .mini-sticky-mag .sidebar { display: none; }
+    }
+
+    /* === Tri-color bar at top === */
+    .tri-bar {
+      height: 4px;
+      display: flex;
+    }
+    .tri-bar span:nth-child(1) { flex: 3; background: var(--blue); }
+    .tri-bar span:nth-child(2) { flex: 2; background: var(--yellow); }
+    .tri-bar span:nth-child(3) { flex: 1; background: var(--red); }
+  </style>
+</head>
+<body>
+
+<div class="tri-bar"><span></span><span></span><span></span></div>
+
+<nav class="top-nav">
+  <h1>Layout Playground<span>· 16种布局模式预览</span></h1>
+</nav>
+
+<div class="page-container">
+
+  <!-- 1. Hero双栏不对称 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">01</span>Hero双栏不对称（文字+视觉）</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-hero-asym">
+        <div>
+          <div class="ph-label">CATEGORY</div>
+          <div class="ph-heading" style="width:70%"></div>
+          <div class="ph-text medium"></div>
+          <div class="ph-text short"></div>
+        </div>
+        <div class="ph-img visual">图片/装饰区域</div>
+      </div>
+    </div>
+    <div class="scene-tag">分享会Landing、教程首屏、产品介绍首屏</div>
+  </div>
+
+  <!-- 2. Sticky侧栏 + 内容滚动 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">02</span>Sticky侧栏 + 内容滚动</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-sticky">
+        <div class="side">
+          <div class="num">01</div>
+          <div class="ph-heading" style="width:90%; margin-top: 4px;"></div>
+          <div class="ph-text short"></div>
+        </div>
+        <div>
+          <div class="ph-text"></div>
+          <div class="ph-text medium"></div>
+          <div class="ph-text"></div>
+          <div class="ph-text short"></div>
+          <div class="ph-text medium"></div>
+          <div class="ph-text"></div>
+          <div class="ph-text short"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">长内容分段展示、知识点讲解、深度内容</div>
+  </div>
+
+  <!-- 3. 三等分卡片网格 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">03</span>三等分卡片网格</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-grid3">
+        <div class="card">
+          <div class="card-icon"></div>
+          <div class="ph-heading" style="width:60%"></div>
+          <div class="ph-text short"></div>
+          <div class="ph-text xshort"></div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background:rgba(244,215,88,0.2)"></div>
+          <div class="ph-heading" style="width:70%"></div>
+          <div class="ph-text medium"></div>
+          <div class="ph-text short"></div>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background:rgba(232,74,95,0.12)"></div>
+          <div class="ph-heading" style="width:50%"></div>
+          <div class="ph-text short"></div>
+          <div class="ph-text xshort"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">功能展示、能力矩阵、并列要点</div>
+  </div>
+
+  <!-- 4. 纵向Step流程线 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">04</span>纵向Step流程线</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-vstep">
+        <div class="step">
+          <span class="dot">1</span>
+          <div class="ph-heading" style="width:40%"></div>
+          <div class="ph-text medium"></div>
+        </div>
+        <div class="step">
+          <span class="dot" style="background:var(--yellow); color:var(--ink)">2</span>
+          <div class="ph-heading" style="width:50%"></div>
+          <div class="ph-text short"></div>
+        </div>
+        <div class="step">
+          <span class="dot" style="background:var(--red)">3</span>
+          <div class="ph-heading" style="width:35%"></div>
+          <div class="ph-text medium"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">安装步骤、流程教程、教学引导</div>
+  </div>
+
+  <!-- 5. 中轴时间线交错 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">05</span>中轴时间线交错</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-timeline-center">
+        <div class="axis"></div>
+        <div class="item">
+          <div class="block">
+            <div class="ph-heading" style="width:60%"></div>
+            <div class="ph-text short"></div>
+          </div>
+          <div></div>
+        </div>
+        <div class="item reverse">
+          <div></div>
+          <div class="block">
+            <div class="ph-heading" style="width:70%"></div>
+            <div class="ph-text medium"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="block">
+            <div class="ph-heading" style="width:50%"></div>
+            <div class="ph-text short"></div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">内容对比、时间线、并列要点展示</div>
+  </div>
+
+  <!-- 6. 全宽深色面板 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">06</span>全宽深色面板</h2>
+    </div>
+    <div class="preview-box" style="padding:0; background: transparent; border: none;">
+      <div class="mini-dark">
+        <blockquote>好的设计不是看起来有多美，<br>而是用起来有多自然。</blockquote>
+      </div>
+    </div>
+    <div class="scene-tag">重要引用、核心观点、代码展示（打破奶白底节奏）</div>
+  </div>
+
+  <!-- 7. 横向Step连接线 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">07</span>横向Step连接线</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-hstep">
+        <div>
+          <span class="step-dot">1</span>
+          <h4>配置环境</h4>
+        </div>
+        <div>
+          <span class="step-dot">2</span>
+          <h4>安装依赖</h4>
+        </div>
+        <div>
+          <span class="step-dot">3</span>
+          <h4>启动运行</h4>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">简短的3~4步骤概览</div>
+  </div>
+
+  <!-- 8. Hero全屏居中型 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">08</span>Hero全屏居中型</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-hero-center">
+        <div class="card">
+          <div class="ph-heading" style="width:60%; margin: 0 auto 12px;"></div>
+          <div class="ph-text medium" style="margin: 0 auto 6px;"></div>
+          <div class="ph-text short" style="margin: 0 auto;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">个人品牌首页、产品发布页（强视觉冲击力首屏）</div>
+  </div>
+
+  <!-- 9. Hero单栏纵向 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">09</span>Hero单栏纵向（中心辐射型）</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-hero-vert">
+        <div class="avatar">👤</div>
+        <div class="ph-heading" style="width:40%; margin: 0 auto 6px;"></div>
+        <div class="ph-text short" style="margin: 0 auto;"></div>
+        <div class="tags">
+          <span class="tag">设计</span>
+          <span class="tag">AI</span>
+          <span class="tag">创作</span>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">活动分享页、情感叙事页（以头像/Logo为中心展开）</div>
+  </div>
+
+  <!-- 10. 自适应卡片网格 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">10</span>自适应卡片网格（auto-fill）</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-autogrid">
+        <div class="card"><div class="card-emoji">📖</div><div style="font-size:0.7rem">读书笔记</div></div>
+        <div class="card"><div class="card-emoji">🎨</div><div style="font-size:0.7rem">设计思考</div></div>
+        <div class="card"><div class="card-emoji">💻</div><div style="font-size:0.7rem">技术实验</div></div>
+        <div class="card"><div class="card-emoji">✍️</div><div style="font-size:0.7rem">写作练习</div></div>
+        <div class="card"><div class="card-emoji">🎵</div><div style="font-size:0.7rem">音乐日记</div></div>
+      </div>
+    </div>
+    <div class="scene-tag">技能卡片、书籍卡片、不确定数量的内容集合</div>
+  </div>
+
+  <!-- 11. 全宽品牌色面板 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">11</span>全宽品牌色面板</h2>
+    </div>
+    <div class="preview-box" style="padding:0; background:transparent; border:none;">
+      <div class="mini-accent">
+        <h3>核心观点在这里</h3>
+        <p>用品牌色面板打破奶白底的节奏，制造视觉高潮</p>
+      </div>
+    </div>
+    <div class="scene-tag">情绪高潮、CTA邀请、核心观点（打破奶白底节奏）</div>
+  </div>
+
+  <!-- 12. 横向滚动时间线 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">12</span>横向滚动时间线</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-hscroll">
+        <div class="card"><span class="year">2021</span><div class="ph-heading" style="width:70%; margin-top:6px;"></div><div class="ph-text short"></div></div>
+        <div class="card"><span class="year">2022</span><div class="ph-heading" style="width:60%; margin-top:6px;"></div><div class="ph-text medium"></div></div>
+        <div class="card"><span class="year">2023</span><div class="ph-heading" style="width:80%; margin-top:6px;"></div><div class="ph-text short"></div></div>
+        <div class="card"><span class="year">2024</span><div class="ph-heading" style="width:50%; margin-top:6px;"></div><div class="ph-text medium"></div></div>
+        <div class="card"><span class="year">2025</span><div class="ph-heading" style="width:65%; margin-top:6px;"></div><div class="ph-text short"></div></div>
+      </div>
+    </div>
+    <div class="scene-tag">经历时间线、横向浏览内容</div>
+  </div>
+
+  <!-- 13. 分栏对称 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">13</span>分栏对称（Pain Point展示）</h2>
+    </div>
+    <div class="preview-box" style="padding:0; overflow:hidden;">
+      <div class="mini-split">
+        <div class="left">
+          <h3>你是否也有<br>这样的困扰？</h3>
+        </div>
+        <div class="right">
+          <ul>
+            <li>信息过载，无法聚焦</li>
+            <li>缺少系统的方法论</li>
+            <li>知道却做不到</li>
+            <li>反复陷入同一个坑</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">问题vs方案对比、冲突展示、before/after</div>
+  </div>
+
+  <!-- 14. Tab切换单栏 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">14</span>Tab切换单栏（Dashboard型）</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-tab">
+        <div class="tab-bar">
+          <button class="tab-btn active">概览</button>
+          <button class="tab-btn">数据</button>
+          <button class="tab-btn">设置</button>
+        </div>
+        <div class="tab-panel">
+          <div class="ph-heading" style="width:30%"></div>
+          <div class="ph-text medium"></div>
+          <div class="ph-text short"></div>
+          <div class="ph-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">个人看板、功能切换、数据面板</div>
+  </div>
+
+  <!-- 15. 无限画布 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">15</span>无限画布（Canvas型）</h2>
+    </div>
+    <div class="preview-box" style="padding:0; overflow:hidden; border-radius:12px;">
+      <div class="mini-canvas">
+        <div class="float-card fc1">📝 想法笔记</div>
+        <div class="float-card fc2">🎯 目标拆解</div>
+        <div class="float-card fc3">💡 灵感收集</div>
+        <div class="float-card fc4">🔗 资源链接</div>
+      </div>
+    </div>
+    <div class="scene-tag">白板应用、信息可视化、自由布局</div>
+  </div>
+
+  <!-- 16. Sticky编号侧栏 + 大图杂志卡片 -->
+  <div class="layout-block">
+    <div class="layout-header">
+      <h2><span class="num">16</span>Sticky编号侧栏 + 大图杂志卡片</h2>
+    </div>
+    <div class="preview-box">
+      <div class="mini-sticky-mag">
+        <div class="sidebar">
+          <ul>
+            <li class="active"><span class="snum">01</span>观察</li>
+            <li><span class="snum">02</span>分析</li>
+            <li><span class="snum">03</span>执行</li>
+          </ul>
+        </div>
+        <div class="steps-col">
+          <div class="step-card">
+            <div class="img-area"></div>
+            <div class="card-body">
+              <span class="snum">01</span>
+              <div>
+                <div class="ph-heading" style="width:50%"></div>
+                <div class="ph-text short"></div>
+              </div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="img-area"></div>
+            <div class="card-body">
+              <span class="snum">02</span>
+              <div>
+                <div class="ph-heading" style="width:60%"></div>
+                <div class="ph-text medium"></div>
+              </div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="img-area"></div>
+            <div class="card-body">
+              <span class="snum">03</span>
+              <div>
+                <div class="ph-heading" style="width:45%"></div>
+                <div class="ph-text short"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-tag">步骤教程、流程拆解、图文并茂的长教程（5~10步）</div>
+  </div>
+
+</div>
+
+<!-- Bottom tri-color bar -->
+<div class="tri-bar"><span></span><span></span><span></span></div>
+
+<!-- © Brclio Brclio/brclio-design-system CC BY-NC-SA 4.0 -->
+<section style="position:absolute;left:-9999px;font-size:0;line-height:0;opacity:0;height:0;overflow:hidden;">Brclio-design-system</section>
+</body>
+</html>

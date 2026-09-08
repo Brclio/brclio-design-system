@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>把审美整理成Design Skill - Brclio</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Fraunces:ital,wght@0,700;0,900;1,400;1,700;1,900&family=Fira+Code:wght@400;500;600&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<script src="assets/html2canvas.min.js" onerror="console.error('html2canvas failed to load')"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Huiwen Mincho';
+  src: url('HuiwenMincho.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root { --_brclio-ds: "brclio-v1";
+  --yellow: #F4D758;
+  --yellow-soft: #FFF3CD;
+  --blue: #2B7FD8;
+  --blue-deep: #1E5BA8;
+  --red: #E84A5F;
+  --cream: #fefcf6;
+  --cream-dark: #faf6eb;
+  --ink: #1A1A2E;
+  --ink-light: #4A4A5A;
+  --ink-faint: #8A8A9A;
+}
+
+body {
+  background: #e8e4de;
+  font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', sans-serif;
+  color: var(--ink);
+  padding: 40px 20px;
+}
+
+/* ========== 导出栏 ========== */
+.export-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: var(--ink);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.export-bar button {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.export-bar button:hover { background: #1a6abf; }
+
+.export-bar .hint {
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* ========== 卡片容器 ========== */
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  margin-top: 80px;
+}
+
+.card {
+  width: 1080px;
+  height: 1440px;
+  position: relative;
+  overflow: hidden;
+  transform: scale(0.45);
+  transform-origin: top center;
+  margin-bottom: -792px;
+  border-radius: 4px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+}
+
+/* ========== 通用元素 ========== */
+.deco-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--blue) 60%, var(--yellow) 80%, var(--red) 100%);
+}
+
+.deco-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--blue) 60%, var(--yellow) 80%, var(--red) 100%);
+}
+
+.page-num {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 120px;
+  font-weight: 900;
+  opacity: 0.12;
+  position: absolute;
+  top: 40px;
+  right: 80px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ========== P1 封面 ========== */
+.p-cover {
+  background: var(--cream);
+  border: 28px solid var(--yellow);
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 90px;
+}
+
+.p-cover .tag {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--yellow);
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  align-self: flex-start;
+}
+
+.p-cover h1 {
+  font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+  font-weight: normal;
+  font-size: 84px;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+
+.p-cover h1 em {
+  background: var(--blue);
+  color: #fff;
+  font-style: normal;
+  padding: 4px 16px;
+  border-radius: 6px;
+}
+
+.p-cover .subtitle {
+  font-size: 44px;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.p-cover .author-row {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: auto;
+}
+
+.p-cover .avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--yellow);
+}
+
+.p-cover .author-name {
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.p-cover .author-desc {
+  font-size: 34px;
+  color: #555;
+  margin-top: 6px;
+}
+
+/* ========== P2 问题页(深色) ========== */
+.p-problem {
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 100px 90px;
+}
+
+.p-problem .page-num { color: var(--yellow); }
+
+.p-problem h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 56px;
+  color: var(--cream);
+  margin-bottom: 60px;
+}
+
+.p-problem h2 em {
+  color: var(--yellow);
+  font-style: normal;
+}
+
+.p-problem .pain-items {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+}
+
+.p-problem .pain-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.p-problem .pain-icon {
+  font-size: 44px;
+  flex-shrink: 0;
+}
+
+.p-problem .pain-text {
+  font-size: 38px;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.p-problem .pain-text strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.p-problem .bottom-line {
+  position: absolute;
+  bottom: 80px;
+  left: 90px;
+  right: 90px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--yellow));
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+/* ========== P3 转折页 ========== */
+.p-turning {
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 90px;
+  text-align: center;
+}
+
+.p-turning .big-emoji {
+  font-size: 96px;
+  margin-bottom: 48px;
+}
+
+.p-turning h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 72px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 40px;
+}
+
+.p-turning h2 em {
+  color: var(--blue);
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--yellow);
+  text-underline-offset: 12px;
+  text-decoration-thickness: 6px;
+}
+
+.p-turning .desc {
+  font-size: 36px;
+  color: var(--ink-light);
+  line-height: 1.7;
+  max-width: 800px;
+}
+
+/* ========== P4 第一版内容(浅色列表) ========== */
+.p-v1 {
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  padding: 90px 90px;
+}
+
+.p-v1 .page-num { color: var(--blue); }
+
+.p-v1 h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 52px;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.p-v1 .label {
+  font-family: 'Fira Code', monospace;
+  font-size: 24px;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 48px;
+  font-weight: 500;
+}
+
+.p-v1 .file-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+.p-v1 .file-row {
+  display: flex;
+  align-items: center;
+  padding: 32px 36px;
+  border-radius: 16px;
+}
+
+.p-v1 .file-row:nth-child(odd) {
+  background: var(--cream-dark);
+}
+
+.p-v1 .file-row:nth-child(even) {
+  background: #fff;
+}
+
+.p-v1 .file-name {
+  font-family: 'Fira Code', monospace;
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 0 0 360px;
+}
+
+.p-v1 .file-desc {
+  font-size: 32px;
+  color: var(--ink-light);
+}
+
+.p-v1 .note {
+  margin-top: 48px;
+  font-size: 30px;
+  color: var(--ink-faint);
+  padding: 24px 32px;
+  border-radius: 12px;
+  background: rgba(43,127,216,0.06);
+}
+
+/* ========== P5 方法论(深色) ========== */
+.p-method {
+  background: #151821;
+  display: flex;
+  flex-direction: column;
+  padding: 90px 90px;
+}
+
+.p-method .page-num { color: var(--yellow); }
+
+.p-method .tag-line {
+  font-family: 'Caveat', cursive;
+  font-size: 32px;
+  color: var(--yellow);
+  margin-bottom: 16px;
+}
+
+.p-method h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 48px;
+  color: var(--cream);
+  margin-bottom: 56px;
+  line-height: 1.4;
+}
+
+.p-method .principle-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-content: center;
+}
+
+.p-method .principle-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 36px 28px;
+}
+
+.p-method .principle-card .p-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.p-method .principle-card h3 {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.p-method .principle-card p {
+  font-size: 28px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+/* ========== P6 金句页(大字留白) ========== */
+.p-quote-big {
+  background: var(--cream-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 100px;
+  text-align: center;
+}
+
+.p-quote-big .oversized-mark {
+  font-family: 'Fraunces', serif;
+  font-size: 280px;
+  color: var(--blue);
+  opacity: 0.1;
+  line-height: 0.5;
+  margin-bottom: 20px;
+}
+
+.p-quote-big .quote-text {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 64px;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 860px;
+}
+
+.p-quote-big .quote-text em {
+  color: var(--blue);
+  font-style: normal;
+}
+
+.p-quote-big .source {
+  margin-top: 48px;
+  font-family: 'Fira Code', monospace;
+  font-size: 24px;
+  color: var(--ink-faint);
+  letter-spacing: 2px;
+}
+
+/* ========== P7 升级做法(流程箭头) ========== */
+.p-upgrade {
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  padding: 90px 80px;
+}
+
+.p-upgrade .page-num { color: var(--blue); }
+
+.p-upgrade h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 52px;
+  color: var(--ink);
+  margin-bottom: 56px;
+}
+
+.p-upgrade .flow-steps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+.p-upgrade .flow-step {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 28px 36px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.p-upgrade .step-num {
+  font-family: 'Fraunces', serif;
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--blue);
+  opacity: 0.25;
+  flex-shrink: 0;
+  width: 72px;
+  text-align: center;
+}
+
+.p-upgrade .step-text {
+  font-size: 34px;
+  color: var(--ink);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.p-upgrade .step-text strong {
+  color: var(--blue);
+}
+
+.p-upgrade .flow-arrow {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.p-upgrade .flow-arrow span {
+  font-size: 40px;
+  color: var(--blue);
+  opacity: 0.5;
+}
+
+/* ========== P8 组件深挖(色块交替) ========== */
+.p-components {
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  padding: 90px 80px;
+}
+
+.p-components .page-num { color: var(--blue); }
+
+.p-components h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 52px;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+
+.p-components .sub-desc {
+  font-size: 32px;
+  color: var(--ink-light);
+  margin-bottom: 48px;
+  line-height: 1.5;
+}
+
+.p-components .data-rows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+.p-components .data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36px 40px;
+  border-radius: 14px;
+}
+
+.p-components .data-row:nth-child(odd) {
+  background: #fff;
+}
+
+.p-components .data-row:nth-child(even) {
+  background: var(--cream-dark);
+}
+
+.p-components .data-label {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.p-components .data-value {
+  font-family: 'Fraunces', serif;
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--blue);
+}
+
+.p-components .data-detail {
+  font-size: 28px;
+  color: var(--ink-faint);
+  text-align: right;
+}
+
+.p-components .bottom-insight {
+  margin-top: 48px;
+  padding: 28px 36px;
+  background: rgba(43,127,216,0.06);
+  border-radius: 14px;
+  font-size: 32px;
+  color: var(--ink-light);
+  line-height: 1.5;
+  border-left: 5px solid var(--blue);
+}
+
+/* ========== P9 文件树(代码面板) ========== */
+.p-filetree {
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 80px 70px;
+}
+
+.p-filetree .page-num { color: var(--yellow); }
+
+.p-filetree h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 48px;
+  color: var(--cream);
+  margin-bottom: 40px;
+}
+
+.p-filetree .code-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0d1117;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.p-filetree .code-titlebar {
+  background: #21262d;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.p-filetree .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+.p-filetree .dot:nth-child(1) { background: var(--red); }
+.p-filetree .dot:nth-child(2) { background: var(--yellow); }
+.p-filetree .dot:nth-child(3) { background: #4ade80; }
+
+.p-filetree .code-titlebar .filename {
+  flex: 1;
+  text-align: center;
+  font-family: 'Fira Code', monospace;
+  font-size: 22px;
+  color: #8b949e;
+}
+
+.p-filetree .code-body {
+  flex: 1;
+  padding: 40px 48px;
+  font-family: 'Fira Code', monospace;
+  font-size: 24px;
+  line-height: 1.9;
+  color: #c9d1d9;
+  overflow: hidden;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.p-filetree .code-body .folder { color: #79c0ff; font-weight: 600; }
+.p-filetree .code-body .file { color: #c9d1d9; }
+.p-filetree .code-body .comment { color: #8b949e; }
+.p-filetree .code-body .highlight-file { color: var(--yellow); }
+
+/* ========== P10 核心认知(大字) ========== */
+.p-insights {
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  padding: 90px 80px;
+}
+
+.p-insights .page-num { color: var(--blue); }
+
+.p-insights h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 52px;
+  color: var(--ink);
+  margin-bottom: 60px;
+}
+
+.p-insights .insight-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+
+.p-insights .insight-item {
+  padding: 0 0 36px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.p-insights .insight-item:last-child {
+  border-bottom: none;
+}
+
+.p-insights .insight-item .text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.p-insights .insight-item .text em {
+  color: var(--blue);
+  font-style: normal;
+}
+
+/* ========== P11 你也可以做(步骤) ========== */
+.p-action {
+  background: var(--cream-dark);
+  display: flex;
+  flex-direction: column;
+  padding: 90px 80px;
+}
+
+.p-action .page-num { color: var(--red); opacity: 0.2; }
+
+.p-action h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 52px;
+  color: var(--ink);
+  margin-bottom: 56px;
+}
+
+.p-action .action-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+.p-action .action-item {
+  display: flex;
+  gap: 24px;
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  align-items: flex-start;
+}
+
+.p-action .action-num {
+  font-family: 'Fraunces', serif;
+  font-size: 60px;
+  font-weight: 900;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 64px;
+}
+
+.p-action .action-item:nth-child(1) .action-num { color: rgba(43,127,216,0.2); }
+.p-action .action-item:nth-child(2) .action-num { color: rgba(244,215,88,0.4); }
+.p-action .action-item:nth-child(3) .action-num { color: rgba(232,74,95,0.2); }
+.p-action .action-item:nth-child(4) .action-num { color: rgba(43,127,216,0.2); }
+.p-action .action-item:nth-child(5) .action-num { color: rgba(244,215,88,0.4); }
+
+.p-action .action-content h3 {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.p-action .action-content p {
+  font-size: 28px;
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+
+/* ========== 尾页 ========== */
+.p-end {
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 90px;
+  text-align: center;
+}
+
+.p-end .quote-mark {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 200px;
+  color: var(--blue);
+  opacity: 0.15;
+  line-height: 0.6;
+  margin-bottom: -20px;
+}
+
+.p-end .quote {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 56px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-bottom: 64px;
+  max-width: 880px;
+}
+
+.p-end .quote em {
+  color: var(--blue);
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--yellow);
+  text-underline-offset: 8px;
+  text-decoration-thickness: 4px;
+}
+
+.p-end .avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--yellow);
+  margin-bottom: 20px;
+}
+
+.p-end .author-name {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.p-end .cta {
+  font-size: 32px;
+  color: var(--blue);
+  font-weight: 600;
+  margin-bottom: 48px;
+}
+
+.p-end .tagline {
+  font-size: 30px;
+  color: var(--ink-light);
+  line-height: 2;
+  text-align: center;
+  letter-spacing: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="export-bar">
+  <button onclick="exportAll()">📥 一键导出PNG</button>
+  <span class="hint">共12张 · 每张导出为1080×1440 PNG</span>
+</div>
+
+<div class="cards-container">
+
+<!-- ===== P1 封面 ===== -->
+<div class="card p-cover" data-card="1">
+  <span class="tag">AI × 设计系统</span>
+  <h1>把审美整理成<br>自己的<em>页面设计Skill</em></h1>
+  <p class="subtitle">每次都跟AI纠结审美 → AI自动输出品牌感内容</p>
+  <div class="author-row">
+    <img class="avatar" src="assets/avatar.png" alt="Brclio 头像">
+    <div>
+      <div class="author-name">Brclio</div>
+      <div class="author-desc">写代码，教编程，做产品</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== P2 痛点页(深色) ===== -->
+<div class="card p-problem" data-card="2">
+  <span class="page-num">02</span>
+  <h2>痛点:AI做的页面<br>每次都要<em>大改</em></h2>
+  <div class="pain-items">
+    <div class="pain-item">
+      <span class="pain-icon">😤</span>
+      <span class="pain-text">这个板块不好看 → <strong>"请给出5个方案供选择"</strong></span>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">🔄</span>
+      <span class="pain-text">选完之后 → <strong>再改细节</strong></span>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">😮‍💨</span>
+      <span class="pain-text">反复几次 → AI积累了偏好,<strong>但下次又忘</strong></span>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">💡</span>
+      <span class="pain-text">与其每次纠正 → <strong>不如写成Skill</strong></span>
+    </div>
+  </div>
+  <div class="bottom-line"></div>
+</div>
+
+<!-- ===== P3 转折页(大字留白) ===== -->
+<div class="card p-turning" data-card="3">
+  <div class="deco-top"></div>
+  <div class="big-emoji">⚡</div>
+  <h2>把审美<br>写成<em>操作手册</em></h2>
+  <p class="desc">从已有页面中梳理偏好<br>让AI整理成可复用的Design Skill</p>
+</div>
+
+<!-- ===== P4 第一版(色块交替行) ===== -->
+<div class="card p-v1" data-card="4">
+  <span class="page-num" style="color: var(--blue);">04</span>
+  <h2>先整理基础规则(少而有用)</h2>
+  <p class="label">Phase 1 · Core Rules</p>
+  <div class="file-list">
+    <div class="file-row">
+      <span class="file-name">SKILL.md</span>
+      <span class="file-desc">触发条件和执行步骤</span>
+    </div>
+    <div class="file-row">
+      <span class="file-name">brand-dna.md</span>
+      <span class="file-desc">三色、字体与气质关键词</span>
+    </div>
+    <div class="file-row">
+      <span class="file-name">scene-tutorial.md</span>
+      <span class="file-desc">教程型页面的规范</span>
+    </div>
+  </div>
+  <div class="note">✨ 基础规则清楚,后续制作就有共同起点</div>
+</div>
+
+<!-- ===== P5 方法论页(深色2x2) ===== -->
+<div class="card p-method" data-card="5">
+  <span class="page-num">05</span>
+  <div class="tag-line">方法参考 · 归藏's PPT Skill ✦</div>
+  <h2>核心思路:<br>限制AI的自由度 = 保证输出质量</h2>
+  <div class="principle-grid">
+    <div class="principle-card">
+      <div class="p-icon">🧱</div>
+      <h3>布局不能乱</h3>
+      <p>只能从预设骨架里选,不能随便发明</p>
+    </div>
+    <div class="principle-card">
+      <div class="p-icon">🎨</div>
+      <h3>颜色不能改</h3>
+      <p>只能从预设主题里选,不能自定义</p>
+    </div>
+    <div class="principle-card">
+      <div class="p-icon">✅</div>
+      <h3>做完要自检</h3>
+      <p>对照Checklist逐条过,P0不过打回</p>
+    </div>
+    <div class="principle-card">
+      <div class="p-icon">📋</div>
+      <h3>零件能粘贴</h3>
+      <p>AI直接复制改内容,不是"理解再创作"</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== P6 金句页(大字) ===== -->
+<div class="card p-quote-big" data-card="6">
+  <div class="oversized-mark">"</div>
+  <p class="quote-text">不是让AI<br>"理解规则再创作"<br>是让AI<em>"拿着零件拼装"</em></p>
+  <span class="source">- DESIGN SKILL 方法论</span>
+</div>
+
+<!-- ===== P7 升级做法(流程) ===== -->
+<div class="card p-upgrade" data-card="7">
+  <span class="page-num">07</span>
+  <h2>设计系统的5个组成</h2>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <span class="step-num">1</span>
+      <span class="step-text"><strong>SKILL.md 工作流</strong> → 遵循7步强制工作流</span>
+    </div>
+    <div class="flow-arrow"><span>↓</span></div>
+    <div class="flow-step">
+      <span class="step-num">2</span>
+      <span class="step-text"><strong>预设模板文件</strong> → AI从模板改,不从零写</span>
+    </div>
+    <div class="flow-arrow"><span>↓</span></div>
+    <div class="flow-step">
+      <span class="step-num">3</span>
+      <span class="step-text"><strong>布局 layouts.md</strong> → 15种布局可直接粘贴</span>
+    </div>
+    <div class="flow-arrow"><span>↓</span></div>
+    <div class="flow-step">
+      <span class="step-num">4</span>
+      <span class="step-text"><strong>自检 checklist.md</strong> → 质量关卡,P0不过打回</span>
+    </div>
+    <div class="flow-arrow"><span>↓</span></div>
+    <div class="flow-step">
+      <span class="step-num">5</span>
+      <span class="step-text"><strong>多个场景文件</strong> → 不同页面不同规范</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== P8 组件库数据(色块交替) ===== -->
+<div class="card p-components" data-card="8">
+  <span class="page-num">08</span>
+  <h2>组件选型:从内容出发</h2>
+  <p class="sub-desc">确定内容 → 选择组件 → 填入信息 → 复用</p>
+  <div class="data-rows">
+    <div class="data-row">
+      <span class="data-label">引用组件</span>
+      <span class="data-value">按需</span>
+      <span class="data-detail">按内容选择类型</span>
+    </div>
+    <div class="data-row">
+      <span class="data-label">卡片组件</span>
+      <span class="data-value">按需</span>
+      <span class="data-detail">按信息选择布局</span>
+    </div>
+    <div class="data-row">
+      <span class="data-label">组件代码库</span>
+      <span class="data-value">即用</span>
+      <span class="data-detail">components.md</span>
+    </div>
+  </div>
+  <div class="bottom-insight">💎 组件就是"标准件",AI直接填入内容,保持一致</div>
+</div>
+
+<!-- ===== P9 文件树(代码面板) ===== -->
+<div class="card p-filetree" data-card="9">
+  <span class="page-num">09</span>
+  <h2>现在的完整结构</h2>
+  <div class="code-window">
+    <div class="code-titlebar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="filename">brclio-design-system/</span>
+    </div>
+    <div class="code-body">
+<span class="folder">brclio-design-system/</span>
+├── <span class="highlight-file">SKILL.md</span>              <span class="comment">← 7步工作流(大脑)</span>
+├── <span class="highlight-file">brand-dna.md</span>          <span class="comment">← 品牌基因(底线)</span>
+├── <span class="folder">assets/</span>               <span class="comment">← 4个模板骨架(起点)</span>
+│   ├── <span class="file">template-tutorial.html</span>
+│   ├── <span class="file">template-landing.html</span>
+│   ├── <span class="file">template-app.html</span>
+│   └── <span class="file">template-cards.html</span>
+└── <span class="folder">references/</span>           <span class="comment">← 规则和零件(知识库)</span>
+    ├── <span class="file">layouts.md</span>         <span class="comment">   15种布局</span>
+    ├── <span class="highlight-file">components.md</span>    <span class="comment">   组件库(可复用)</span>
+    ├── <span class="file">checklist.md</span>       <span class="comment">   质量检查清单</span>
+    ├── <span class="file">scene-tutorial.md</span>  <span class="comment">   教程场景</span>
+    ├── <span class="file">scene-landing.md</span>   <span class="comment">   活动页场景</span>
+    ├── <span class="file">scene-app.md</span>       <span class="comment">   App型场景</span>
+    └── <span class="file">scene-cards.md</span>     <span class="comment">   卡片场景</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== P10 你也可以做(编号步骤) ===== -->
+<div class="card p-action" data-card="10">
+  <span class="page-num">10</span>
+  <h2>你也可以做 👇</h2>
+  <div class="action-grid">
+    <div class="action-item">
+      <span class="action-num">1</span>
+      <div class="action-content">
+        <h3>先做东西,不满意就选</h3>
+        <p>让AI出5个方案你来选,选几次偏好就清晰了</p>
+      </div>
+    </div>
+    <div class="action-item">
+      <span class="action-num">2</span>
+      <div class="action-content">
+        <h3>把偏好写下来</h3>
+        <p>"不要纯黑""标题用衬线体" → 就是你的brand-dna</p>
+      </div>
+    </div>
+    <div class="action-item">
+      <span class="action-num">3</span>
+      <div class="action-content">
+        <h3>让AI出选项你来选</h3>
+        <p>不要让AI替你做审美决策,出10个变体你选</p>
+      </div>
+    </div>
+    <div class="action-item">
+      <span class="action-num">4</span>
+      <div class="action-content">
+        <h3>找一个好参考学方法论</h3>
+        <p>参考现有方法,整理成适合自己的规则</p>
+      </div>
+    </div>
+    <div class="action-item">
+      <span class="action-num">5</span>
+      <div class="action-content">
+        <h3>每次不满意就加规则</h3>
+        <p>Design Skill是活的,跟着你的审美一起长</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== P11 核心认知 ===== -->
+<div class="card p-insights" data-card="11">
+  <span class="page-num">11</span>
+  <h2>核心认知</h2>
+  <div class="insight-list">
+    <div class="insight-item">
+      <p class="text">审美不是天赋,是可以<em>工程化</em>的</p>
+    </div>
+    <div class="insight-item">
+      <p class="text">不是把审美交给AI,是把审美写成AI的<em>操作手册</em></p>
+    </div>
+    <div class="insight-item">
+      <p class="text">不是限制AI的创造力,是<em>保护你的品牌感</em>不被AI的"创意"稀释</p>
+    </div>
+    <div class="insight-item">
+      <p class="text">AI的能力在于"执行",你的能力在于<em>"判断"</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== P12 尾页 ===== -->
+<div class="card p-end" data-card="12">
+  <div class="deco-bottom"></div>
+  <div class="quote-mark">“</div>
+  <p class="quote">Design Skill =<br>把你的<em>判断力</em>变成<br>AI能读懂的规则</p>
+  <img class="avatar" src="assets/avatar.png" alt="Brclio 头像">
+  <p class="author-name">Brclio</p>
+  <p class="cta">关注 Brclio</p>
+  <p class="tagline">▪️程序员｜编程教育者<br>▪️写代码、教编程、做产品<br>▪️2019年开始一对一编程教学<br>学习、实践、创造、分享</p>
+</div>
+
+</div><!-- cards-container -->
+
+<script>
+async function exportAll() {
+  if (typeof html2canvas === 'undefined') {
+    alert('⏳ html2canvas 正在加载，请稍等几秒后重试。');
+    return;
+  }
+  if (typeof JSZip === 'undefined') {
+    alert('JSZip 加载失败，请刷新重试。');
+    return;
+  }
+  const cards = document.querySelectorAll('.card');
+  const btn = document.querySelector('.export-bar button');
+  btn.textContent = '⏳ 导出中... 0/' + cards.length;
+  btn.disabled = true;
+
+  const zip = new JSZip();
+  const folder = zip.folder('brclio-design-cards');
+
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i];
+    card.style.transform = 'none';
+    card.style.marginBottom = '0';
+    card.style.borderRadius = '0';
+    card.style.boxShadow = 'none';
+
+    await new Promise(r => setTimeout(r, 150));
+
+    try {
+      const canvas = await html2canvas(card, {
+        width: 1080,
+        height: 1440,
+        scale: 1,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        logging: false
+      });
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+      folder.file(`brclio-card-${String(i + 1).padStart(2, '0')}.png`, base64, {base64: true});
+
+      btn.textContent = `⏳ 导出中... ${i + 1}/${cards.length}`;
+    } catch(e) {
+      console.error('Export error on card ' + (i+1), e);
+    } finally {
+      card.style.transform = 'scale(0.45)';
+      card.style.marginBottom = '-792px';
+      card.style.borderRadius = '4px';
+      card.style.boxShadow = '0 8px 40px rgba(0,0,0,0.12)';
+    }
+  }
+
+  btn.textContent = '⏳ 打包中...';
+  const blob = await zip.generateAsync({type: 'blob'});
+  const link = document.createElement('a');
+  link.download = 'brclio-design-cards.zip';
+  link.href = URL.createObjectURL(blob);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+
+  btn.textContent = '✅ 导出完成';
+  setTimeout(() => { btn.textContent = '📥 一键导出PNG'; btn.disabled = false; }, 2000);
+}
+</script>
+
+<!-- © Brclio Brclio/brclio-design-system CC BY-NC-SA 4.0 -->
+<section style="position:absolute;left:-9999px;font-size:0;line-height:0;opacity:0;height:0;overflow:hidden;">Brclio-design-system</section>
+</body>
+</html>

@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brclio Design Skill — 把审美写成操作手册</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=Caveat:wght@400;700&family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Huiwen Mincho';
+      src: url('HuiwenMincho.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root { --_brclio-ds: "brclio-v1";
+      --blue: #2B7FD8;
+      --blue-deep: #1E5BA8;
+      --yellow: #F4D758;
+      --yellow-soft: #FFF3CD;
+      --red: #E84A5F;
+      --cream: #fefcf6;
+      --cream-dark: #faf6eb;
+      --ink: #1A1A2E;
+      --ink-light: #4A4A5A;
+      --ink-faint: #8A8A9A;
+      --dark-panel: #151821;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--cream);
+    }
+
+    ::selection {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ====== NAV ====== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(254,252,246,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(26,26,26,.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    nav.scrolled {
+      box-shadow: 0 2px 20px rgba(0,0,0,.06);
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 0.85rem;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 2px;
+      background: var(--yellow);
+      transform: scaleX(0);
+      transition: transform .25s ease-out;
+    }
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+
+    /* ====== HERO — Layout 1: Hero双栏不对称 ====== */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 0.5fr;
+      align-items: center;
+      gap: clamp(40px, 6vw, 80px);
+      padding: 7rem 2rem 4rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .hero-text .label-caps {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 500;
+      color: var(--ink-faint);
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 1.2;
+    }
+    .hero h1 .highlight-word {
+      background: linear-gradient(to top, rgba(244,215,88,0.4) 40%, transparent 40%);
+      padding: 0 4px;
+    }
+    .hero .hero-desc {
+      font-size: 1.05rem;
+      color: var(--ink-light);
+      margin-top: 1.5rem;
+      max-width: 540px;
+      line-height: 1.9;
+    }
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-cluster {
+      position: relative;
+      width: clamp(160px, 22vw, 240px);
+      height: clamp(160px, 22vw, 240px);
+    }
+    .hero-cluster .ring {
+      position: absolute;
+      inset: -14px;
+      border: 2.5px dashed rgba(43,127,216,0.25);
+      border-radius: 50%;
+      animation: heroSpin 25s linear infinite;
+    }
+    .hero-cluster .avatar-img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 8px 40px rgba(43,127,216,0.15);
+    }
+    .hero-cluster .orbit-item {
+      position: absolute;
+      background: white;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.72rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      z-index: 3;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    @keyframes heroSpin { to { transform: rotate(360deg); } }
+
+    /* ====== SECTION COMMON ====== */
+    .section {
+      padding: clamp(80px, 12vh, 160px) 0;
+    }
+    .section--alt {
+      background: var(--cream-dark);
+    }
+    .section-header {
+      margin-bottom: clamp(40px, 6vw, 80px);
+    }
+    .section-number {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--blue);
+      opacity: 0.3;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .section-title {
+      font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+      font-weight: 900;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+    }
+
+    /* ====== SECTION 1: 核心逻辑 — Layout 4: 纵向Step流程线 ====== */
+    .logic-flow {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(24px, 3vw, 40px);
+      padding-left: 60px;
+      position: relative;
+      max-width: 800px;
+    }
+    .logic-flow::before {
+      content: '';
+      position: absolute;
+      left: 22px;
+      top: 30px; bottom: 30px;
+      width: 2px;
+      border-left: 2px dashed var(--yellow);
+    }
+    .logic-step {
+      position: relative;
+      background: white;
+      border-radius: 14px;
+      padding: clamp(20px, 2.5vw, 32px);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+    }
+    .logic-step .step-dot {
+      position: absolute;
+      left: -60px;
+      top: 24px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .logic-step .step-file {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.82rem;
+      color: var(--blue);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .logic-step .step-desc {
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      line-height: 1.7;
+    }
+    .logic-pullquote {
+      margin-top: clamp(32px, 4vw, 56px);
+      padding: 28px 32px;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid var(--yellow);
+      position: relative;
+    }
+    .logic-pullquote::before {
+      content: '"';
+      font-family: 'Fraunces', serif;
+      font-size: 4rem;
+      color: var(--yellow);
+      position: absolute;
+      top: -8px; left: 20px;
+      opacity: 0.6;
+      line-height: 1;
+    }
+    .logic-pullquote p {
+      font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 700;
+      line-height: 1.8;
+      padding-left: 20px;
+    }
+
+    /* ====== SECTION 2: 四种场景 — Layout 3: 三等分卡片网格 (用4列) ====== */
+    .scene-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(16px, 2vw, 24px);
+    }
+    .scene-card {
+      position: relative;
+      border: 2px dashed;
+      border-radius: 16px;
+      padding: 28px 20px;
+      background: white;
+    }
+    .scene-card:nth-child(1) { border-color: rgba(43,127,216,0.3); }
+    .scene-card:nth-child(2) { border-color: rgba(244,215,88,0.5); }
+    .scene-card:nth-child(3) { border-color: rgba(232,74,95,0.3); }
+    .scene-card:nth-child(4) { border-color: rgba(43,127,216,0.2); }
+    .scene-card .scene-label {
+      position: absolute;
+      top: -11px;
+      left: 16px;
+      font-family: 'Caveat', cursive;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: var(--cream-dark);
+      padding: 0 8px;
+    }
+    .scene-card:nth-child(1) .scene-label { color: var(--blue); }
+    .scene-card:nth-child(2) .scene-label { color: #9a8100; }
+    .scene-card:nth-child(3) .scene-label { color: var(--red); }
+    .scene-card:nth-child(4) .scene-label { color: var(--blue-deep); }
+    .scene-card .scene-emoji {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+    .scene-card h3 {
+      font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .scene-card p {
+      font-size: 0.82rem;
+      color: var(--ink-light);
+      line-height: 1.7;
+    }
+
+    /* ====== SECTION 3: 文件结构 — Layout 6: 全宽深色面板 ====== */
+    .dark-section {
+      background: var(--dark-panel);
+      color: #e2e8f0;
+      padding: clamp(60px, 8vh, 120px) 0;
+    }
+    .dark-section .section-number { color: var(--yellow); opacity: 0.4; }
+    .dark-section .section-title { color: #f1f5f9; }
+    .code-macos {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+      max-width: 720px;
+    }
+    .code-macos .code-titlebar {
+      background: #2d2d3a;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .code-macos .code-dots { display: flex; gap: 6px; }
+    .code-macos .code-dots .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-macos .code-dots .dot:nth-child(1) { background: #ff5f56; }
+    .code-macos .code-dots .dot:nth-child(2) { background: #ffbd2e; }
+    .code-macos .code-dots .dot:nth-child(3) { background: #27c93f; }
+    .code-macos .code-filename {
+      flex: 1;
+      text-align: center;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+    }
+    .code-macos .code-body {
+      background: #1a1b26;
+      padding: clamp(20px, 3vw, 32px);
+    }
+    .code-macos pre {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      line-height: 2;
+      color: #a9b1d6;
+      margin: 0;
+      overflow-x: auto;
+    }
+    .code-macos pre .dir { color: #7aa2f7; }
+    .code-macos pre .file { color: #a9b1d6; }
+    .code-macos pre .cm { color: #565f89; }
+    .code-macos pre .arrow { color: #bb9af7; }
+
+    /* ====== SECTION 4: 7步工作流 — Layout 2: Sticky侧栏 ====== */
+    .workflow-layout {
+      display: grid;
+      grid-template-columns: 0.35fr 1fr;
+      gap: clamp(40px, 6vw, 100px);
+      align-items: start;
+    }
+    .workflow-side {
+      position: sticky;
+      top: 100px;
+    }
+    .workflow-side .big-num {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(4rem, 10vw, 7rem);
+      font-weight: 900;
+      color: var(--blue);
+      opacity: 0.12;
+      line-height: 0.85;
+      display: block;
+    }
+    .workflow-table {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .workflow-table .wt-header {
+      display: grid;
+      grid-template-columns: 60px 1fr 1.2fr;
+      background: var(--ink);
+      padding: 14px 20px;
+    }
+    .workflow-table .wt-header span {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .workflow-table .wt-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 1.2fr;
+      padding: 14px 20px;
+      background: white;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      align-items: center;
+    }
+    .workflow-table .wt-row:last-child { border-bottom: none; }
+    .workflow-table .wt-row .wt-step {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      color: var(--blue);
+      font-size: 0.9rem;
+    }
+    .workflow-table .wt-row .wt-action {
+      font-size: 0.88rem;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .workflow-table .wt-row .wt-why {
+      font-size: 0.82rem;
+      color: var(--ink-light);
+    }
+
+    /* ====== SECTION 5: 品牌基因 — Layout 13: 分栏对称 ====== */
+    .brand-split {
+      display: grid;
+      grid-template-columns: 0.45fr 1fr;
+      min-height: 70vh;
+      overflow: hidden;
+    }
+    .brand-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(40px, 5vw, 80px);
+      background: var(--cream-dark);
+    }
+    .brand-left h2 {
+      font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+      font-weight: 900;
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      margin-bottom: 1rem;
+    }
+    .brand-left .brand-vibe {
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      line-height: 1.9;
+    }
+    .brand-right {
+      padding: clamp(40px, 5vw, 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(28px, 3vw, 48px);
+    }
+    /* Color swatches */
+    .color-row {
+      display: flex;
+      gap: clamp(12px, 2vw, 24px);
+      align-items: center;
+    }
+    .color-swatch {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .color-info .color-name {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--ink-faint);
+    }
+    .color-info .color-use {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .color-info .color-ratio {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--ink-light);
+    }
+    /* Font list */
+    .font-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .font-item {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .font-item .font-sample {
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-width: 140px;
+    }
+    .font-item .font-usage {
+      font-size: 0.8rem;
+      color: var(--ink-faint);
+    }
+
+    /* ====== SECTION 6: 禁忌 — Do/Don't ====== */
+    .compare-stamp {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .compare-stamp-col {
+      background: white;
+      border: 2px solid;
+      padding: 32px 28px;
+      position: relative;
+      border-radius: 4px;
+    }
+    .compare-stamp-col--dont { border-color: var(--red); }
+    .compare-stamp-col--do { border-color: var(--blue); }
+    .compare-stamp-col .compare-stamp-label {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Fraunces', serif;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 2px 16px;
+      background: var(--cream);
+    }
+    .compare-stamp-col--dont .compare-stamp-label { color: var(--red); }
+    .compare-stamp-col--do .compare-stamp-label { color: var(--blue); }
+    .compare-stamp-col .stamp-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .compare-stamp-col .stamp-list li {
+      font-size: 0.85rem;
+      color: var(--ink-light);
+      line-height: 1.6;
+      padding-left: 24px;
+      position: relative;
+    }
+    .compare-stamp-col--dont .stamp-list li::before {
+      content: '✕';
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--red);
+    }
+    .compare-stamp-col--do .stamp-list li::before {
+      content: '◆';
+      position: absolute;
+      left: 0;
+      font-size: 0.6rem;
+      top: 5px;
+      color: var(--blue);
+    }
+
+    /* ====== SECTION 7: 质量检查 — Layout 7: 横向Step连接线 ====== */
+    .checklist-levels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .checklist-levels::before {
+      content: '';
+      position: absolute;
+      top: 32px;
+      left: 32px; right: 32px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), var(--yellow), var(--blue));
+      border-radius: 2px;
+    }
+    .checklist-card {
+      text-align: center;
+      padding: 0 clamp(12px, 2vw, 24px);
+    }
+    .checklist-dot {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .checklist-card:nth-child(1) .checklist-dot { background: var(--red); }
+    .checklist-card:nth-child(2) .checklist-dot { background: var(--yellow); color: var(--ink); }
+    .checklist-card:nth-child(3) .checklist-dot { background: var(--blue); }
+    .checklist-card h3 {
+      font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .checklist-card .check-items {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .checklist-card .check-items li {
+      font-size: 0.82rem;
+      color: var(--ink-light);
+      line-height: 1.6;
+      padding-left: 20px;
+      position: relative;
+    }
+    .checklist-card .check-items li::before {
+      content: '☐';
+      position: absolute;
+      left: 0;
+      color: var(--ink-faint);
+    }
+
+    /* ====== SECTION 8: Fork指南 — 手写批注引用 ====== */
+    .fork-container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .fork-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .fork-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 22px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .fork-step .fs-num {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(43,127,216,0.08);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .fork-step .fs-text {
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      line-height: 1.7;
+    }
+    .fork-step .fs-text strong {
+      color: var(--ink);
+    }
+    .fork-note {
+      margin-top: clamp(32px, 4vw, 48px);
+      position: relative;
+      padding: 28px 24px;
+      border: 2px dashed rgba(43,127,216,0.25);
+      border-radius: 12px;
+      background: white;
+    }
+    .fork-note .fork-note-badge {
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--blue);
+      background: var(--cream);
+      padding: 0 10px;
+    }
+    .fork-note p {
+      font-size: 0.92rem;
+      color: var(--ink-light);
+      line-height: 1.8;
+    }
+
+    /* ====== FOOTER ====== */
+    .footer {
+      padding: clamp(40px, 6vh, 80px) 0;
+      text-align: center;
+    }
+    .footer p {
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+    }
+    .footer a {
+      color: var(--blue);
+      text-decoration: none;
+      position: relative;
+    }
+    .footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 2px;
+      background: var(--yellow);
+    }
+
+    /* ====== Scroll Reveal ====== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+    .reveal-d5 { transition-delay: 0.5s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .hero-cluster .ring { animation: none; }
+    }
+
+    /* ====== 响应式 ====== */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding: 5rem 1.5rem 3rem;
+        text-align: center;
+      }
+      .hero-visual { order: -1; }
+      .hero .hero-desc { max-width: 100%; }
+      .scene-grid { grid-template-columns: 1fr 1fr; }
+      .workflow-layout {
+        grid-template-columns: 1fr;
+      }
+      .workflow-side {
+        position: static;
+      }
+      .brand-split {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .compare-stamp { grid-template-columns: 1fr; }
+      .checklist-levels { grid-template-columns: 1fr; gap: 32px; }
+      .checklist-levels::before { display: none; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      body { font-size: 15px; }
+      .scene-grid { grid-template-columns: 1fr; }
+      .logic-flow { padding-left: 48px; }
+      .logic-step .step-dot { left: -48px; width: 36px; height: 36px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====== NAV ====== -->
+  <nav>
+    <span class="nav-logo">Brclio Design Skill</span>
+    <div class="nav-links">
+      <a href="#logic">核心逻辑</a>
+      <a href="#scenes">场景</a>
+      <a href="#structure">结构</a>
+      <a href="#workflow">工作流</a>
+      <a href="#brand">品牌基因</a>
+      <a href="#checklist">质量检查</a>
+    </div>
+  </nav>
+
+  <!-- ====== HERO ====== -->
+  <section class="hero">
+    <div class="hero-text">
+      <span class="label-caps">Personal Design System</span>
+      <h1>把<span class="highlight-word">审美</span>写成<br>操作手册</h1>
+      <p class="hero-desc">一套给 AI 看的个人品牌设计系统。告诉 AI 用什么颜色、字体、布局、组件，以及什么绝对不能用。限制AI的自由度 = 保证输出质量。</p>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-cluster">
+        <div class="ring"></div>
+        <img class="avatar-img" src="assets/avatar.png" alt="Brclio 头像">
+        <span class="orbit-item" style="top:-5px;right:-20px">🎨 设计系统</span>
+        <span class="orbit-item" style="bottom:10px;left:-30px">✨ 不像AI</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 1: 核心逻辑 ====== -->
+  <section class="section" id="logic">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">01</span>
+        <h2 class="section-title">核心逻辑</h2>
+      </div>
+      <div class="logic-flow reveal reveal-d1">
+        <div class="logic-step">
+          <span class="step-dot">1</span>
+          <div class="step-file">SKILL.md</div>
+          <div class="step-desc">流程 — AI按什么步骤干活</div>
+        </div>
+        <div class="logic-step">
+          <span class="step-dot">2</span>
+          <div class="step-file">brand-dna.md + references/*</div>
+          <div class="step-desc">规范 — 能用什么、不能用什么</div>
+        </div>
+        <div class="logic-step">
+          <span class="step-dot">3</span>
+          <div class="step-file">assets/template-*.html</div>
+          <div class="step-desc">起点 — 从模板改，不从零写</div>
+        </div>
+      </div>
+      <div class="logic-pullquote reveal reveal-d2">
+        <p>限制AI的自由度 = 保证输出质量。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 2: 四种场景 ====== -->
+  <section class="section section--alt" id="scenes">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">02</span>
+        <h2 class="section-title">支持 4 种场景</h2>
+      </div>
+      <div class="scene-grid reveal reveal-d1">
+        <div class="scene-card">
+          <span class="scene-label">Tutorial #1</span>
+          <div class="scene-emoji">📖</div>
+          <h3>教程 / 介绍页</h3>
+          <p>信息清晰、步骤明确、一步步看下来很舒服</p>
+        </div>
+        <div class="scene-card">
+          <span class="scene-label">Landing #2</span>
+          <div class="scene-emoji">🎪</div>
+          <h3>活动页 / Landing</h3>
+          <p>视觉冲击、有节奏感、让人忍不住往下看</p>
+        </div>
+        <div class="scene-card">
+          <span class="scene-label">App #3</span>
+          <div class="scene-emoji">⚡</div>
+          <h3>App型 / 功能型</h3>
+          <p>功能优先、交互感强、看板/书架/Canvas</p>
+        </div>
+        <div class="scene-card">
+          <span class="scene-label">Cards #4</span>
+          <div class="scene-emoji">🖼️</div>
+          <h3>小红书图文卡片</h3>
+          <p>3:4比例、字大、手机可读、一键导出PNG</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 3: 文件结构 ====== -->
+  <section class="dark-section" id="structure">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">03</span>
+        <h2 class="section-title">文件结构</h2>
+      </div>
+      <div class="code-macos reveal reveal-d1">
+        <div class="code-titlebar">
+          <div class="code-dots">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="code-filename">brclio-design-system/</span>
+        </div>
+        <div class="code-body">
+<pre><span class="dir">brclio-design-system/</span>
+├── <span class="file">SKILL.md</span>                    <span class="cm">← 7步工作流（大脑）</span>
+├── <span class="file">brand-dna.md</span>                <span class="cm">← 品牌基因：颜色/字体/气质/禁忌</span>
+├── <span class="file">README.md</span>                   <span class="cm">← 你在看的这个</span>
+├── <span class="dir">assets/</span>                     <span class="cm">← 模板骨架（起点）</span>
+│   ├── <span class="file">template-tutorial.html</span>      教程页
+│   ├── <span class="file">template-landing.html</span>       活动页/Landing
+│   ├── <span class="file">template-app.html</span>           App型/功能型
+│   ├── <span class="file">template-cards.html</span>         小红书图文卡片
+│   └── <span class="file">avatar.png</span>                  IP头像
+└── <span class="dir">references/</span>                 <span class="cm">← 规则和零件（知识库）</span>
+    ├── <span class="file">layouts.md</span>                  15种布局模式
+    ├── <span class="file">components.md</span>               组件库（2988行）
+    ├── <span class="file">checklist.md</span>                质量检查清单
+    ├── <span class="file">scene-tutorial.md</span>           教程场景规范
+    ├── <span class="file">scene-landing.md</span>            活动页场景规范
+    ├── <span class="file">scene-app.md</span>               App型场景规范
+    └── <span class="file">scene-cards.md</span>              小红书卡片场景规范</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 4: 7步工作流 ====== -->
+  <section class="section" id="workflow">
+    <div class="container">
+      <div class="workflow-layout">
+        <div class="workflow-side reveal">
+          <span class="big-num">7</span>
+          <span class="section-number">04</span>
+          <h2 class="section-title">工作流</h2>
+          <p style="font-size: 0.88rem; color: var(--ink-light); margin-top: 1rem; line-height: 1.8;">AI 每次做设计必须按这个顺序走。不允许跳步。</p>
+        </div>
+        <div class="reveal reveal-d1">
+          <div class="workflow-table">
+            <div class="wt-header">
+              <span>#</span>
+              <span>Action</span>
+              <span>Why</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">1</span>
+              <span class="wt-action">问 5 个问题</span>
+              <span class="wt-why">不自作主张</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">2</span>
+              <span class="wt-action">读 brand-dna + 场景文件</span>
+              <span class="wt-why">先学规矩再动手</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">3</span>
+              <span class="wt-action">从 assets/ 复制模板</span>
+              <span class="wt-why">从半成品开始</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">4</span>
+              <span class="wt-action">从 layouts.md 选布局</span>
+              <span class="wt-why">每个 section 不能一样</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">5</span>
+              <span class="wt-action">从 components.md 选组件</span>
+              <span class="wt-why">禁止用 HTML 默认样式</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">6</span>
+              <span class="wt-action">对照 checklist 自检</span>
+              <span class="wt-why">P0 不过就打回</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-step">7</span>
+              <span class="wt-action">交付 HTML 文件</span>
+              <span class="wt-why">浏览器打开就能看</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 5: 品牌基因 ====== -->
+  <section class="section section--alt" id="brand">
+    <div class="brand-split">
+      <div class="brand-left reveal">
+        <span class="section-number">05</span>
+        <h2>品牌基因</h2>
+        <p class="brand-vibe" style="margin-top: 1.5rem;">
+          <strong>气质关键词：</strong><br>
+          可爱但有品质 · 手绘蜡笔感 · 有温度 · 不像AI · 一看就是"Brclio的"
+        </p>
+      </div>
+      <div class="brand-right reveal reveal-d1">
+        <!-- Colors -->
+        <div style="margin-bottom: 8px;">
+          <span style="font-family: 'Caveat', cursive; font-size: 1.1rem; color: var(--ink-faint);">IP三色 ↓</span>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background: var(--blue);"></div>
+          <div class="color-info">
+            <span class="color-name">#2B7FD8</span>
+            <span class="color-use">蓝 — 主色调、标题、超链接</span>
+            <span class="color-ratio">60%</span>
+          </div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background: var(--yellow);"></div>
+          <div class="color-info">
+            <span class="color-name">#F4D758</span>
+            <span class="color-use">黄 — 强调、装饰、高亮</span>
+            <span class="color-ratio">30%</span>
+          </div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background: var(--red);"></div>
+          <div class="color-info">
+            <span class="color-name">#E84A5F</span>
+            <span class="color-use">红 — 点缀、CTA、标签</span>
+            <span class="color-ratio">10%</span>
+          </div>
+        </div>
+        <!-- Fonts -->
+        <div style="margin-top: 12px; margin-bottom: 8px;">
+          <span style="font-family: 'Caveat', cursive; font-size: 1.1rem; color: var(--ink-faint);">字体 ↓</span>
+        </div>
+        <div class="font-list">
+          <div class="font-item">
+            <span class="font-sample" style="font-family: 'Huiwen Mincho', 'Noto Serif SC', serif;">汇文明朝体</span>
+            <span class="font-usage">中文标题</span>
+          </div>
+          <div class="font-item">
+            <span class="font-sample" style="font-family: 'Fraunces', serif; font-style: italic;">Fraunces</span>
+            <span class="font-usage">英文装饰</span>
+          </div>
+          <div class="font-item">
+            <span class="font-sample" style="font-family: 'Caveat', cursive;">Caveat</span>
+            <span class="font-usage">手写/注释</span>
+          </div>
+          <div class="font-item">
+            <span class="font-sample" style="font-family: 'Fira Code', monospace;">Fira Code</span>
+            <span class="font-usage">代码/终端</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 6: 禁忌 ====== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">06</span>
+        <h2 class="section-title">禁忌清单</h2>
+      </div>
+      <div class="compare-stamp reveal reveal-d1">
+        <div class="compare-stamp-col compare-stamp-col--dont">
+          <span class="compare-stamp-label">AVOID</span>
+          <ul class="stamp-list">
+            <li>蓝紫渐变、neon、glassmorphism</li>
+            <li>Inter / Roboto / Arial 等overused字体</li>
+            <li>所有section居中的千篇一律布局</li>
+            <li>bounce / elastic 弹跳动画</li>
+            <li>渐变文字、AI光效</li>
+            <li>HTML默认 blockquote / 列表 / 表格</li>
+            <li>看起来像AI生成的通用模板</li>
+          </ul>
+        </div>
+        <div class="compare-stamp-col compare-stamp-col--do">
+          <span class="compare-stamp-label">PREFER</span>
+          <ul class="stamp-list">
+            <li>暖底背景 #fefcf6 / #faf6eb</li>
+            <li>品牌三色（蓝60 / 黄30 / 红10）</li>
+            <li>每个section布局形式不同</li>
+            <li>expo ease-out 自然减速动效</li>
+            <li>手绘蜡笔感装饰、虚线圆圈</li>
+            <li>从 components.md 选用所有组件</li>
+            <li>截图发Twitter不会被说"又是AI做的"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 7: 质量检查 ====== -->
+  <section class="section section--alt" id="checklist">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">07</span>
+        <h2 class="section-title">质量检查</h2>
+      </div>
+      <div class="checklist-levels reveal reveal-d1">
+        <div class="checklist-card">
+          <span class="checklist-dot">P0</span>
+          <h3>必须全过</h3>
+          <ul class="check-items">
+            <li>品牌三色比例正确</li>
+            <li>无禁忌元素</li>
+            <li>暖底背景、非纯黑白</li>
+            <li>衬线+无衬线混搭</li>
+            <li>响应式断点</li>
+            <li>每section布局不同</li>
+            <li>clamp() fluid sizing</li>
+            <li>无HTML默认样式</li>
+          </ul>
+        </div>
+        <div class="checklist-card">
+          <span class="checklist-dot">P1</span>
+          <h3>应过</h3>
+          <ul class="check-items">
+            <li>至少一个视觉惊喜section</li>
+            <li>字号对比极端</li>
+            <li>Scroll Reveal + stagger</li>
+            <li>大装饰数字</li>
+            <li>高亮标记或品牌色条</li>
+            <li>::selection 黄色高亮</li>
+          </ul>
+        </div>
+        <div class="checklist-card">
+          <span class="checklist-dot">P2</span>
+          <h3>加分</h3>
+          <ul class="check-items">
+            <li>图片溢出容器</li>
+            <li>深色面板打破节奏</li>
+            <li>装饰元素克制</li>
+            <li>prefers-reduced-motion</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 8: Fork指南 ====== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">08</span>
+        <h2 class="section-title">怎么用（Fork 指南）</h2>
+      </div>
+      <div class="fork-container reveal reveal-d1">
+        <div class="fork-steps">
+          <div class="fork-step">
+            <span class="fs-num">1</span>
+            <span class="fs-text"><strong>Fork 这个仓库</strong></span>
+          </div>
+          <div class="fork-step">
+            <span class="fs-num">2</span>
+            <span class="fs-text">改 <strong>brand-dna.md</strong> — 换成你的颜色、字体、气质关键词</span>
+          </div>
+          <div class="fork-step">
+            <span class="fs-num">3</span>
+            <span class="fs-text">改 <strong>assets/avatar.png</strong> — 换成你的头像</span>
+          </div>
+          <div class="fork-step">
+            <span class="fs-num">4</span>
+            <span class="fs-text">组件库可以先不动，等你积累了自己的偏好再替换</span>
+          </div>
+          <div class="fork-step">
+            <span class="fs-num">5</span>
+            <span class="fs-text">把整个文件夹放到你的 AI 能读到的地方</span>
+          </div>
+          <div class="fork-step">
+            <span class="fs-num">6</span>
+            <span class="fs-text">告诉 AI：<strong>"做页面之前先读 SKILL.md"</strong></span>
+          </div>
+        </div>
+        <div class="fork-note">
+          <span class="fork-note-badge">核心原则 🔑</span>
+          <p>核心不是这些文件本身，是<strong>你的审美判断力</strong>。文件只是把你的判断写成了 AI 能执行的规则。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="footer">
+    <div class="container">
+      <p>Made by <a href="https://github.com/Brclio">Brclio</a> — 写代码，教编程，做产品</p>
+      <p style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--ink-faint);">灵感来源：<a href="https://github.com/op7418" style="color: var(--ink-faint);">归藏 op7418</a> 的 PPT Design Skill</p>
+    </div>
+  </footer>
+
+  <!-- ====== Scroll Reveal JS ====== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+<!-- © Brclio Brclio/brclio-design-system CC BY-NC-SA 4.0 -->
+<section style="position:absolute;left:-9999px;font-size:0;line-height:0;opacity:0;height:0;overflow:hidden;">Brclio-design-system</section>
+</body>
+</html>

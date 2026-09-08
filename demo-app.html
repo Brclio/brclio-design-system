@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人仪表盘 — Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* === CSS变量 === */
+    :root { --_brclio-ds: "brclio-v1";
+      --blue: #2B7FD8;
+      --yellow: #F4D758;
+      --red: #E84A5F;
+      --cream: #fefcf6;
+      --ink: #1A1A2E;
+      --ink-light: #4A4A5A;
+      --ink-faint: #8A8A9A;
+      --card-bg: #fff;
+      --border: rgba(26,26,26,.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--cream);
+    }
+
+    ::selection {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    /* === 三色装饰条 === */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--blue);
+      z-index: 9999;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      top: 3px;
+      left: 0;
+      width: 33.3%;
+      height: 2px;
+      background: var(--yellow);
+      z-index: 9999;
+    }
+    .tricolor-red {
+      position: fixed;
+      top: 3px;
+      right: 0;
+      width: 33.3%;
+      height: 2px;
+      background: var(--red);
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    /* === Fixed Header === */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 56px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+    }
+
+    .app-header h1 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all .2s;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* === Tab栏 === */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      border-bottom: 2px solid #eee;
+      padding: 0 1.5rem;
+      background: var(--cream);
+      position: sticky;
+      top: 56px;
+      z-index: 99;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all .2s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .tab.active {
+      border-bottom-color: var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--ink);
+    }
+
+    /* === 内容区 === */
+    .app-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* === 统计条 === */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      text-align: center;
+    }
+
+    .stat-card .stat-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    .stat-card .stat-number.blue { color: var(--blue); }
+    .stat-card .stat-number.yellow { color: #c5a800; }
+    .stat-card .stat-number.red { color: var(--red); }
+
+    .stat-card .stat-label {
+      font-size: 0.8rem;
+      color: var(--ink-faint);
+      margin-top: 4px;
+    }
+
+    /* === 卡片网格 === */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .app-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+
+    .app-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+
+    .app-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-card p {
+      font-size: 0.85rem;
+      color: var(--ink-light);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      background: rgba(43,127,216,0.1);
+      color: var(--blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .card-badge.yellow {
+      background: rgba(244,215,88,0.2);
+      color: #9a8400;
+    }
+
+    .card-badge.red {
+      background: rgba(232,74,95,0.1);
+      color: var(--red);
+    }
+
+    .card-badge.green {
+      background: rgba(40,167,69,0.1);
+      color: #28a745;
+    }
+
+    /* === 卡片内列表 === */
+    .card-list {
+      list-style: none;
+      margin-top: 0.75rem;
+    }
+
+    .card-list li {
+      padding: 6px 0;
+      font-size: 0.85rem;
+      color: var(--ink-light);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-list li:last-child {
+      border-bottom: none;
+    }
+
+    .card-list .check {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .card-list .check.done {
+      background: var(--blue);
+      border-color: var(--blue);
+      position: relative;
+    }
+
+    .card-list .check.done::after {
+      content: '✓';
+      color: #fff;
+      font-size: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .card-list .done-text {
+      text-decoration: line-through;
+      color: var(--ink-faint);
+    }
+
+    /* === 进度条 === */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-top: 0.75rem;
+      overflow: hidden;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--blue);
+      transition: width .3s;
+    }
+
+    .progress-bar .fill.yellow { background: var(--yellow); }
+    .progress-bar .fill.red { background: var(--red); }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--ink-faint);
+      margin-top: 4px;
+    }
+
+    /* === 列表视图 === */
+    .list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .list-item {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+
+    .list-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.06);
+    }
+
+    .list-item-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      background: rgba(43,127,216,0.08);
+    }
+
+    .list-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .list-item-body h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .list-item-body p {
+      font-size: 0.8rem;
+      color: var(--ink-faint);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .list-item-meta {
+      font-size: 0.75rem;
+      color: var(--ink-faint);
+      white-space: nowrap;
+    }
+
+    /* === 大卡片 === */
+    .card-wide {
+      grid-column: 1 / -1;
+    }
+
+    /* === 时间线 === */
+    .timeline {
+      margin-top: 1rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 1rem;
+      position: relative;
+    }
+
+    .timeline-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 14px;
+      bottom: 0;
+      width: 1.5px;
+      background: var(--border);
+    }
+
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .timeline-dot.yellow { background: var(--yellow); }
+    .timeline-dot.red { background: var(--red); }
+
+    .timeline-body {
+      flex: 1;
+    }
+
+    .timeline-body .time {
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+    }
+
+    .timeline-body .desc {
+      font-size: 0.85rem;
+      color: var(--ink-light);
+    }
+
+    /* === Section标题 === */
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+    }
+
+    /* === Tab内容切换 === */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* === Modal === */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 560px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content h2 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content .app-input {
+      margin-bottom: 0.75rem;
+    }
+
+    /* === 输入框 === */
+    .app-input {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      transition: border-color .2s;
+      background: var(--card-bg);
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .app-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(43,127,216,0.1);
+    }
+
+    /* === 按钮 === */
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity .2s;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* === Footer === */
+    .app-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.75rem;
+      color: var(--ink-faint);
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* === 响应式 === */
+    @media (max-width: 600px) {
+      .app-content { padding: 1.5rem 1rem; }
+      .card-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .list-item-meta { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 三色装饰条（红） -->
+  <div class="tricolor-red"></div>
+
+  <!-- ====== Fixed Header ====== -->
+  <header class="app-header">
+    <h1>我的仪表盘</h1>
+    <div class="header-actions">
+      <button class="btn-icon" onclick="openModal()" title="新建任务">＋</button>
+      <button class="btn-icon" title="通知">🔔</button>
+      <div class="avatar">B</div>
+    </div>
+  </header>
+
+  <!-- ====== Tab栏 ====== -->
+  <div class="tab-bar">
+    <button class="tab active" data-tab="tab-overview">总览</button>
+    <button class="tab" data-tab="tab-tasks">任务</button>
+    <button class="tab" data-tab="tab-notes">笔记</button>
+    <button class="tab" data-tab="tab-activity">动态</button>
+  </div>
+
+  <!-- ====== 内容区 ====== -->
+  <main class="app-content">
+
+    <!-- Tab: 总览 -->
+    <div class="tab-content active" id="tab-overview">
+
+      <!-- 统计数据 -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number blue">7</div>
+          <div class="stat-label">今日待办</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number yellow">68%</div>
+          <div class="stat-label">本周进度</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number red">3</div>
+          <div class="stat-label">即将到期</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">本周笔记</div>
+        </div>
+      </div>
+
+      <!-- 看板卡片 -->
+      <div class="card-grid">
+
+        <!-- 今日任务 -->
+        <div class="app-card">
+          <span class="card-badge">今日重点</span>
+          <h3>今日任务</h3>
+          <ul class="card-list">
+            <li><span class="check done"></span><span class="done-text">完成设计系统文档</span></li>
+            <li><span class="check done"></span><span class="done-text">回复客户邮件</span></li>
+            <li><span class="check"></span>准备周五的演示材料</li>
+            <li><span class="check"></span>Review PR #142</li>
+            <li><span class="check"></span>整理本周学习笔记</li>
+          </ul>
+          <div class="progress-bar"><div class="fill" style="width: 40%;"></div></div>
+          <div class="progress-label"><span>完成 2/5</span><span>40%</span></div>
+        </div>
+
+        <!-- 本周进度 -->
+        <div class="app-card">
+          <span class="card-badge yellow">进行中</span>
+          <h3>本周目标</h3>
+          <p style="margin-bottom: 0.75rem;">产品 v2.0 发布准备</p>
+          <div class="progress-bar"><div class="fill" style="width: 68%;"></div></div>
+          <div class="progress-label"><span>已完成 17/25 项</span><span>68%</span></div>
+          <div style="margin-top: 1rem;">
+            <p style="font-size: 0.8rem; color: var(--ink-faint);">📅 截止：7月6日（周日）</p>
+          </div>
+        </div>
+
+        <!-- 最近笔记 -->
+        <div class="app-card">
+          <span class="card-badge green">笔记</span>
+          <h3>最近笔记</h3>
+          <ul class="card-list">
+            <li><span style="color: var(--blue);">📝</span> 用户访谈总结 — 今天</li>
+            <li><span style="color: var(--blue);">📝</span> 竞品分析报告 — 昨天</li>
+            <li><span style="color: var(--blue);">📝</span> Q3 规划草案 — 周一</li>
+            <li><span style="color: var(--blue);">📝</span> 设计系统规范 v2 — 周一</li>
+          </ul>
+        </div>
+
+        <!-- 即将到期 -->
+        <div class="app-card">
+          <span class="card-badge red">紧急</span>
+          <h3>即将到期</h3>
+          <ul class="card-list">
+            <li>
+              <span style="color: var(--red); font-size: 0.8rem;">●</span>
+              <span>提交季度报告 — <strong>明天</strong></span>
+            </li>
+            <li>
+              <span style="color: var(--red); font-size: 0.8rem;">●</span>
+              <span>更新落地页文案 — 后天</span>
+            </li>
+            <li>
+              <span style="color: var(--yellow); font-size: 0.8rem;">●</span>
+              <span>产品Demo录制 — 周五</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 阅读清单 -->
+        <div class="app-card">
+          <span class="card-badge">学习</span>
+          <h3>阅读清单</h3>
+          <ul class="card-list">
+            <li><span>📖</span>《Build》— Tony Fadell</li>
+            <li><span>📖</span>《Thinking in Systems》进度 60%</li>
+            <li><span>🎧</span> Lenny's Podcast #204</li>
+          </ul>
+          <div class="progress-bar"><div class="fill yellow" style="width: 55%;"></div></div>
+          <div class="progress-label"><span>月目标 3/5 本</span><span>55%</span></div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="app-card">
+          <span class="card-badge">快捷</span>
+          <h3>常用入口</h3>
+          <ul class="card-list">
+            <li><span>🗂</span> 项目管理看板</li>
+            <li><span>📊</span> 数据分析面板</li>
+            <li><span>💬</span> 团队讨论频道</li>
+            <li><span>📁</span> 共享文件库</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab: 任务 -->
+    <div class="tab-content" id="tab-tasks">
+      <div class="section-title">进行中 · 5项</div>
+      <div class="list-view">
+        <div class="list-item">
+          <div class="list-item-icon">📋</div>
+          <div class="list-item-body">
+            <h4>准备周五产品演示</h4>
+            <p>包含新功能演示流程、数据面板展示、用户反馈回顾</p>
+          </div>
+          <div class="list-item-meta">7月5日</div>
+        </div>
+        <div class="list-item">
+          <div class="list-item-icon">🎨</div>
+          <div class="list-item-body">
+            <h4>设计系统组件更新</h4>
+            <p>更新 Button、Card、Modal 组件至 v2 规范</p>
+          </div>
+          <div class="list-item-meta">7月6日</div>
+        </div>
+        <div class="list-item">
+          <div class="list-item-icon">📝</div>
+          <div class="list-item-body">
+            <h4>用户访谈报告整理</h4>
+            <p>整合上周 5 场用户访谈的关键洞察</p>
+          </div>
+          <div class="list-item-meta">7月7日</div>
+        </div>
+        <div class="list-item">
+          <div class="list-item-icon">🔧</div>
+          <div class="list-item-body">
+            <h4>Review PR #142 性能优化</h4>
+            <p>首页加载时间优化，目标 < 2s</p>
+          </div>
+          <div class="list-item-meta">7月4日</div>
+        </div>
+        <div class="list-item">
+          <div class="list-item-icon">📊</div>
+          <div class="list-item-body">
+            <h4>Q3 季度报告</h4>
+            <p>汇总 Q2 数据，制定 Q3 OKR 和资源计划</p>
+          </div>
+          <div class="list-item-meta">7月5日</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top: 2rem;">已完成 · 本周</div>
+      <div class="list-view">
+        <div class="list-item" style="opacity: 0.6;">
+          <div class="list-item-icon">✅</div>
+          <div class="list-item-body">
+            <h4 style="text-decoration: line-through;">完成设计系统文档</h4>
+            <p>所有基础组件文档已更新</p>
+          </div>
+          <div class="list-item-meta">已完成</div>
+        </div>
+        <div class="list-item" style="opacity: 0.6;">
+          <div class="list-item-icon">✅</div>
+          <div class="list-item-body">
+            <h4 style="text-decoration: line-through;">回复客户邮件</h4>
+            <p>回复了 A 公司关于合作方案的确认</p>
+          </div>
+          <div class="list-item-meta">已完成</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: 笔记 -->
+    <div class="tab-content" id="tab-notes">
+      <div class="section-title">最近笔记</div>
+      <div class="card-grid">
+        <div class="app-card">
+          <span class="card-badge">访谈</span>
+          <h3>用户访谈总结</h3>
+          <p>5位用户的共性反馈：1) 首页信息密度偏高；2) 搜索功能不够直觉；3) 希望有快捷操作入口…</p>
+          <p style="font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem;">今天 10:30 · 1,240字</p>
+        </div>
+        <div class="app-card">
+          <span class="card-badge yellow">分析</span>
+          <h3>竞品分析报告</h3>
+          <p>对比了 Notion、Linear、Craft 三款产品的信息架构和交互模式，提炼出 6 个可借鉴的设计点…</p>
+          <p style="font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem;">昨天 16:20 · 3,800字</p>
+        </div>
+        <div class="app-card">
+          <span class="card-badge green">规划</span>
+          <h3>Q3 规划草案</h3>
+          <p>核心目标：用户留存率提升 15%、完成 v2.0 发布、建立设计系统完整文档库…</p>
+          <p style="font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem;">周一 09:00 · 2,100字</p>
+        </div>
+        <div class="app-card">
+          <span class="card-badge">设计</span>
+          <h3>设计系统规范 v2</h3>
+          <p>更新了色彩系统、间距规范、字体层级，新增了 App 型页面和长内容页面模板…</p>
+          <p style="font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem;">周一 14:00 · 5,600字</p>
+        </div>
+        <div class="app-card">
+          <span class="card-badge red">思考</span>
+          <h3>关于简洁的思考</h3>
+          <p>Less is more 不是去掉东西，是找到那个"刚好"的点。像日本料理一样，每一刀都有意义…</p>
+          <p style="font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem;">上周五 22:10 · 680字</p>
+        </div>
+        <div class="app-card">
+          <span class="card-badge">读书</span>
+          <h3>《Build》读书笔记</h3>
+          <p>Tony Fadell 关于"opinion"的观点很有启发——产品经理的核心能力是形成观点并为之辩护…</p>
+          <p style="font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.5rem;">上周四 21:30 · 1,500字</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: 动态 -->
+    <div class="tab-content" id="tab-activity">
+      <div class="section-title">今日动态</div>
+      <div class="app-card" style="margin-bottom: 2rem;">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-body">
+              <div class="time">10:30</div>
+              <div class="desc">完成「用户访谈总结」笔记，共 1,240 字</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot yellow"></div>
+            <div class="timeline-body">
+              <div class="time">09:45</div>
+              <div class="desc">将「回复客户邮件」标记为已完成</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-body">
+              <div class="time">09:15</div>
+              <div class="desc">将「完成设计系统文档」标记为已完成</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot red"></div>
+            <div class="timeline-body">
+              <div class="time">08:30</div>
+              <div class="desc">新增任务「提交季度报告」，截止明天</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">昨天</div>
+      <div class="app-card" style="margin-bottom: 2rem;">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-body">
+              <div class="time">16:20</div>
+              <div class="desc">完成「竞品分析报告」，共 3,800 字</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot yellow"></div>
+            <div class="timeline-body">
+              <div class="time">14:00</div>
+              <div class="desc">本周目标进度更新至 60%</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-body">
+              <div class="time">11:30</div>
+              <div class="desc">完成 3 项任务，新增 2 项任务</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-body">
+              <div class="time">09:00</div>
+              <div class="desc">开始新的一天，5 项待办</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ====== Footer ====== -->
+  <footer class="app-footer">
+    Brclio Design System · App Demo · 仅供展示
+  </footer>
+
+  <!-- ====== Modal: 新建任务 ====== -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2>新建任务</h2>
+      <input class="app-input" type="text" placeholder="任务名称">
+      <input class="app-input" type="text" placeholder="截止日期（如 7月10日）">
+      <textarea class="app-input" rows="3" placeholder="备注说明（可选）" style="resize: vertical;"></textarea>
+      <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="btn-primary" onclick="closeModal()">创建任务</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== JS ====== -->
+  <script>
+    // Tab切换
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Modal
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // 点击 overlay 关闭
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+  </script>
+<!-- © Brclio Brclio/brclio-design-system CC BY-NC-SA 4.0 -->
+<section style="position:absolute;left:-9999px;font-size:0;line-height:0;opacity:0;height:0;overflow:hidden;">Brclio-design-system</section>
+</body>
+</html>
