@@ -399,7 +399,7 @@
     <span class="dot"></span><span class="dot"></span><span class="dot"></span>
   </div>
   <div class="quote-body">
-    <div class="quote-prompt">$ cd brclio-design-system</div>
+    <div class="quote-prompt">$ tool insight --topic=主题</div>
     <h3 class="quote-title">观点标题</h3>
     <p class="quote-desc">观点描述内容</p>
   </div>
@@ -3994,7 +3994,7 @@ Programmer, educator, author
 Learn. Build. Teach. Share.
 ```
 
-中文 CTA 使用「关注 Brclio」，英文 CTA 使用「Stay curious. Keep building.」。链接仅使用 `identity.md` 列出的当前链接。
+英文内容可另配固定 CTA「Stay curious. Keep building.」，替代「关注 Brclio」。链接仅使用 `identity.md` 列出的当前链接。
 
 ---
 

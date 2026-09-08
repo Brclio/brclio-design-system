@@ -2,7 +2,7 @@
 
 一套给 AI 看的个人品牌设计系统。
 
-**Brclio · 黄家宝** · [小红书](https://www.xiaohongshu.com/user/profile/5e413a430000000001000f4c) · [哔哩哔哩](https://space.bilibili.com/405961705) · [GitHub](https://github.com/Brclio)
+**Brclio · 黄家宝** · [小红书](https://www.xiaohongshu.com/user/profile/5e413a430000000001000f4c) · [Twitter / X](https://x.com/huangjiarongbao) · [哔哩哔哩](https://space.bilibili.com/405961705) · [GitHub](https://github.com/Brclio)
 
 程序员 / 编程教育者 / 作者 / 独立开发者。写代码，教编程，写文章，做产品。
 

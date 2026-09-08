@@ -39,6 +39,7 @@ Learn. Build. Teach. Share.
 - 设计系统仓库：https://github.com/Brclio/brclio-design-system
 - 品牌素材：https://github.com/Brclio/brand-studio/tree/main/data
 - 小红书：https://www.xiaohongshu.com/user/profile/5e413a430000000001000f4c
+- Twitter / X：https://x.com/huangjiarongbao
 - 哔哩哔哩：https://space.bilibili.com/405961705
 - 品牌网站：https://brclio.com
 - 个人网站：https://bornforthis.cn
