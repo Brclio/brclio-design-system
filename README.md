@@ -223,7 +223,7 @@ AI 每次做设计必须按这个顺序走：
 
 ## License
 
-[![CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![CC BY-NC-SA 4.0](assets/images/license-cc-by-nc-sa-4.0.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 本仓库中的方法论、设计规范、工作流程、布局模式、组件模式、模板和文档，采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 协议。
 
